@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="color-scheme" content="dark">
+ <title>Wyrmhole Project Supporters</title>
+ <style>
+  *{box-sizing:border-box}body{margin:0;background:#0d0e15;color:#eeeaf7;font-family:system-ui,sans-serif;line-height:1.6}
+  main{max-width:800px;margin:8vh auto;padding:32px}header{border-bottom:1px solid #343044;padding-bottom:32px}
+  .eyebrow{text-transform:uppercase;letter-spacing:.18em;font-size:.8rem;color:#bba4eb}h1{font-size:clamp(2.2rem,6vw,3.5rem);line-height:1.15;margin:12px 0 20px}
+  p{color:#c1bccc;max-width:620px}a{color:#c5b2f2}.button{display:inline-block;background:#a88bdb;color:#120c1c;text-decoration:none;font-weight:650;padding:12px 22px;border-radius:8px;margin-top:10px}
+  h2{margin-top:36px;font-size:1.5rem}ul{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;padding:0}
+  li{background:#191821;border:1px solid #302b40;border-radius:8px;padding:14px 18px;overflow-wrap:anywhere}footer{border-top:1px solid #343044;margin-top:36px;padding-top:20px;font-size:.85rem;color:#a49cad}
+ </style>
+</head>
+<body><main>
+ <header><div class="eyebrow">Wyrmhole Project</div><h1>Thank you, supporters.</h1>
+ <p>Your support helps us build places to gather, share music, and make memories. We appreciate everyone helping bring this project to life.</p>
+ <a class="button" href="https://ko-fi.com/wyrmholeproject">Support the project on Ko-fi</a></header>
+ <section aria-labelledby="supporters-heading"><h2 id="supporters-heading">Our supporters</h2><p id="status" role="status">Loading the thank-you list…</p><ul id="names"></ul></section>
+ <footer><a href="supporters.json">Supporter name feed</a> · This list also appears on the thank-you board in VRChat.</footer>
+</main><script>
+ let loaded=false;
+ async function refresh(){
+  try{
+   const response=await fetch('supporters.json',{cache:'no-cache'});
+   if(!response.ok)throw new Error('Unavailable');
+   const data=await response.json();
+   if(data.schemaVersion!==1||!Array.isArray(data.names)||data.names.length>500||data.names.some(name=>typeof name!=='string'||name.length>48))throw new Error('Invalid list');
+   const list=document.getElementById('names');
+   list.replaceChildren(...data.names.map(name=>{const item=document.createElement('li');item.textContent=name;return item;}));
+   document.getElementById('status').textContent=data.names.length?'With thanks to everyone listed here.':'Our first supporters will appear here as donations arrive. Thank you for being part of the project.';
+   loaded=true;
+  }catch{if(!loaded)document.getElementById('status').textContent='The supporter list is temporarily unavailable. Please check back soon.';}
+ }
+ refresh();setInterval(refresh,60000);
+</script></body>
+</html>
